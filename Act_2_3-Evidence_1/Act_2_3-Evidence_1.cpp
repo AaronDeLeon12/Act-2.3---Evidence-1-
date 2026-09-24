@@ -157,11 +157,84 @@ void sortByDate(vector<string>& lines)
 	sort(lines.begin(), lines.end(), compareLine);
 }
 
+//  Parte 3: pedir fecha de inicio y fecha de fin 
+
+void requestDateRange(Date& startDate, Date& endDate)
+{
+	string monthText;
+	int day;
+
+	cout << "Enter start date (format: Mon Day, e.g. Jun 15): ";
+	cin >> monthText >> day;
+	startDate.month = month2num(monthText);
+	startDate.day = day;
+	startDate.hour = 0;
+	startDate.minute = 0;
+	startDate.second = 0;
+
+	cout << "Enter end date (format: Mon Day, e.g. Jun 20): ";
+	cin >> monthText >> day;
+	endDate.month = month2num(monthText);
+	endDate.day = day;
+	endDate.hour = 23;
+	endDate.minute = 59;
+	endDate.second = 59;
+}
+
+// Parte 5: guarda los resultados de la busqueda pero en un  archivo 
+
+bool saveResults(const string& filename, const vector<string>& lines)
+{
+	ofstream file(filename);
+	if (!file.is_open())
+	{
+		cerr << "Error opening output file: " << filename << endl;
+		return false;
+	}
+
+	for (const auto& line : lines)
+	{
+		file << line << endl;
+	}
+
+	file.close();
+	return true;
+}
+
+vector<string> searchByDateRange(const vector<string>& lines, const Date& startDate, const Date& endDate)
+{
+	vector<string> results;
+	for (const auto& line : lines)
+	{
+		Date lineDate;
+		if (getDate(line, lineDate))
+		{
+			// Verifica si lineDate >= startDate y lineDate <= endDate
+			if (!compareDate(lineDate, startDate) && !compareDate(endDate, lineDate))
+			{
+				results.push_back(line);
+			}
+		}
+	}
+	return results;
+}
+
 int main()
 {
 	logArray log;
 	init(log);
 	readFile("bitacora.txt", log.lines);
 	sortByDate(log.lines);
-	printLines(log.lines);
+    
+    Date startDate;
+	Date endDate;
+	requestDateRange(startDate, endDate);
+
+	vector<string> results = searchByDateRange(log.lines, startDate, endDate);
+
+	printLines(results);
+
+	saveResults("resultados.txt", results);
+
+	cout << results.size() << " records found and saved to resultados.txt" << endl;
 }
