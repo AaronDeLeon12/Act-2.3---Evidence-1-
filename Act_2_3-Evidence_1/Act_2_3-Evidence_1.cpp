@@ -201,36 +201,18 @@ bool saveResults(const string& filename, const vector<string>& lines)
 	return true;
 }
 
-vector<string> searchByDateRange(const vector<string>& lines, const Date& startDate, const Date& endDate)
-{
-	vector<string> results;
-	for (const auto& line : lines)
-	{
-		Date lineDate;
-		if (getDate(line, lineDate))
-		{
-			// Verifica si lineDate >= startDate y lineDate <= endDate
-			if (!compareDate(lineDate, startDate) && !compareDate(endDate, lineDate))
-			{
-				results.push_back(line);
-			}
-		}
-	}
-	return results;
-}
-
 int main()
 {
 	logArray log;
 	init(log);
 	readFile("bitacora.txt", log.lines);
 	sortByDate(log.lines);
-    
-    Date startDate;
+
+	Date startDate;
 	Date endDate;
 	requestDateRange(startDate, endDate);
 
-	vector<string> results = searchByDateRange(log.lines, startDate, endDate);
+	// vector<string> results = searchByDateRange(log.lines, startDate, endDate);
 
 	printLines(results);
 
@@ -238,3 +220,4 @@ int main()
 
 	cout << results.size() << " records found and saved to resultados.txt" << endl;
 }
+
